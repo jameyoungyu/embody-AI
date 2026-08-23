@@ -34,6 +34,8 @@ Stage 8  Paper
 | [docs/08_cross_check_notes.md](docs/08_cross_check_notes.md) | **对外部审计报告的交叉核实**：一处判定逻辑不成立、一处文献事实纠正、C3 风险重估 |
 | [docs/09_venue_timeline.md](docs/09_venue_timeline.md) | **投稿窗口核实**：ICRA 2026 workshop 与 CoRL 2026 均已关闭，路线改为 arXiv 预印本 + RA-L |
 | [docs/10_stage3_pilot_protocol.md](docs/10_stage3_pilot_protocol.md) | **Stage 3 Pilot 预注册协议**：统计模型、功效分析、执行阶段、停止规则 |
+| [docs/11_work_orders.md](docs/11_work_orders.md) | **任务单**：分工、禁止事项、回报格式、验收标准 |
+| [docs/12_t0_audit.md](docs/12_t0_audit.md) | **T0 验收记录**：T0-1 通过，T0-2 因引用不实退回 |
 
 ## Stage 1 一句话结论
 
