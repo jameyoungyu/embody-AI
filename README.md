@@ -7,8 +7,8 @@
 ## 方法论（Stage 流程）
 
 ```
-Stage 1  Literature Mining   ← 当前阶段（已完成）
-Stage 2  Novelty Audit（6 层查重）
+Stage 1  Literature Mining   （已完成）
+Stage 2  Novelty Audit（6 层查重）← 当前阶段（Layer 1-4/6 完成，Layer 5 引文图待补）
 Stage 3  4080 Pilot（验证现象是否存在）
 Stage 4  Mechanism（研究成因）
 Stage 5  Generalization（跨模型 / 跨数据集）
@@ -29,6 +29,7 @@ Stage 8  Paper
 | [docs/03_candidates.md](docs/03_candidates.md) | 5 个进入 Novelty Audit 的候选问题 + 量化打分 + Top-1 推荐 |
 | [docs/04_stage2_audit_plan.md](docs/04_stage2_audit_plan.md) | Stage 2 六层查重的具体执行计划（可直接照做） |
 | [docs/05_references.md](docs/05_references.md) | 参考文献 + **逐条核实状态标注** |
+| [docs/06_stage2_audit_result.md](docs/06_stage2_audit_result.md) | **Stage 2 查重结果**：C1 降级为 C 并换 claim，C2 淘汰，Pilot 设计重写 |
 
 ## Stage 1 一句话结论
 
@@ -37,7 +38,9 @@ Stage 8  Paper
 > 以及**闭环控制中扰动如何随任务时域复合**。这正好是单张 4080 用别人已发布的
 > checkpoint 就能回答的问题。
 
-详见 [docs/03_candidates.md](docs/03_candidates.md) 的 Top-1 推荐。
+详见 [docs/03_candidates.md](docs/03_candidates.md) 的 Top-1 推荐——
+但**该结论已被 Stage 2 修订**：「无人按干净性能归一化」是错的（PDR 已存在），
+存活的问题收窄为「PDR 的比例假设从未被检验」。见 [docs/06_stage2_audit_result.md](docs/06_stage2_audit_result.md)。
 
 ## 证据纪律
 

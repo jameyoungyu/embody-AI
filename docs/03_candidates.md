@@ -1,5 +1,11 @@
 # Stage 1-C：进入 Novelty Audit 的 5 个候选问题
 
+> ⚠️ **本文件是 Stage 1 的初判，已被 Stage 2 审计部分推翻。**
+> 阅读前请先看 [`06_stage2_audit_result.md`](06_stage2_audit_result.md)：
+> - **C1 由 D 降为 C**，且原 claim（「无人控制干净性能」）**错误**——PDR 指标已存在，必须换 claim；
+> - **C2 已淘汰**——被 Science Robotics 的 LBM 论文与 STEP 占据；
+> - C1 的 Pilot 每条件 100 episodes **统计功效不足**，设计已在 Stage 2 重写。
+
 > 说明：本阶段只完成了 **Novelty Audit 的 Layer 1–2**（直接检索 + 同义词检索）。
 > Layer 3–6（机制检索、跨领域检索、引文图、最新预印本）留给 Stage 2，计划见 `04_stage2_audit_plan.md`。
 > 因此下面的 Novelty Level 都标为 **preliminary**，不得直接写进论文。
@@ -62,8 +68,9 @@ Taori et al.（NeurIPS 2020）证明 OOD 精度与 ID 精度沿一条几乎确�
 
 ## 6. Novelty Level（preliminary）
 
-**D**（在 Layer 1–2 检索范围内未发现直接研究）——但必须在 Stage 2 完成 Layer 3–6 才能确认。
-最大风险是某篇 2026 年的 VLA 评测论文在附录里画了 clean-vs-perturbed 散点图。
+~~**D**~~ → **Stage 2 审计后为 C**。原判失效：VLATest (2409.12894) 已定义 PDR =
+(SR_clean − SR_perturbed)/SR_clean，即已有按干净成功率归一化的指标。
+存活的 claim 收窄为「PDR 的**比例假设**从未被检验」。详见 `06_stage2_audit_result.md`。
 
 ## 7. Novelty Boundary
 
@@ -152,7 +159,10 @@ MVA 🟡 / ICRA 🟢 / IROS 🟢 / RA-L 🟢 / CoRL 🟢（CoRL 偏爱这类实�
 
 ---
 
-# Candidate C2 — 鲁棒性排名的测量可靠性：方法效应还是 seed 噪声？
+# ~~Candidate C2~~ — 鲁棒性排名的测量可靠性（**Stage 2 已淘汰**）
+
+> 淘汰原因：LBM（arXiv 2507.05331，**Science Robotics 2026**，1,800 真机 + 47,000 仿真 rollouts、盲测 A/B）
+> 与 STEP（2503.10966，序贯检验策略比较）已占据该问题。降级为 C1 的实验设计约束。
 
 ## Observation
 2606.04233 证明了 LIBERO 上只有 19.8% 的**干净** SOTA 声明统计显著。
@@ -288,9 +298,9 @@ VLA 侧 DA-PTQ（2604.11572）已提出"时序误差累积/漂移"的概念 → 
 
 | Candidate | Novelty | Significance | Generality | Feasibility(4080) | Exp. clarity | Robotics rel. | Publication | Risk(越低越好) | 总评 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|:--:|
-| **C1** ID–OOD 关系 / effective robustness | 8 | 9 | 9 | 8 | 9 | 6 | 8 | 5 | **S** |
+| **C1** ID–OOD 关系 / effective robustness | ~~8~~ 6 | 9 | 9 | ~~8~~ 7 | 9 | 6 | 7 | ~~5~~ 6 | **A**（原 S，Stage 2 下调） |
 | **C3** 抓取 corruption + AP↔执行脱钩 | 6 | 8 | 8 | 9 | 9 | 9 | 8 | 4 | **A** |
-| **C2** 鲁棒性测量可靠性 | 6 | 8 | 8 | 7 | 9 | 6 | 6 | 5 | **A−** |
+| ~~**C2**~~ 鲁棒性测量可靠性 | 2 | 8 | 8 | 7 | 9 | 6 | 3 | 8 | **D 淘汰** |
 | **C5** 压缩 × 鲁棒性 | 4 | 7 | 7 | 10 | 9 | 8 | 6 | 6 | **B+**（并入 C1） |
 | **C4** 跨扰动轴迁移 | 5 | 7 | 7 | 6 | 8 | 6 | 6 | 6 | **B** |
 
