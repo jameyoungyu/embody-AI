@@ -1,0 +1,47 @@
+# Embodied AI 研究选题挖掘项目
+
+本仓库记录一次系统性的具身智能（Embodied AI / Robot Learning / Robot Manipulation）
+研究方向挖掘过程。目标不是"想出几个看起来新颖的模块"，而是找到**真实存在、尚未被解决、
+可被证伪、单张 RTX 4080 可完成 Pilot 验证**的研究问题。
+
+## 方法论（Stage 流程）
+
+```
+Stage 1  Literature Mining   ← 当前阶段（已完成）
+Stage 2  Novelty Audit（6 层查重）
+Stage 3  4080 Pilot（验证现象是否存在）
+Stage 4  Mechanism（研究成因）
+Stage 5  Generalization（跨模型 / 跨数据集）
+Stage 6  Method（最小必要解法）
+Stage 7  Resource Escalation（申请 GPU / 机器人）
+Stage 8  Paper
+```
+
+核心纪律：**Cheap discovery → Strong evidence → Resource escalation**。
+在问题本身尚未被证明存在之前，不投入昂贵资源。
+
+## 文档
+
+| 文件 | 内容 |
+| --- | --- |
+| [docs/01_landscape.md](docs/01_landscape.md) | 2022–2026 研究地图：15 个子方向的主流方法 / 已解决 / 未解决 / 拥挤度 |
+| [docs/02_failure_modes.md](docs/02_failure_modes.md) | Failure Mode 矿藏清单 + **淘汰清单**（哪些方向已经死了） |
+| [docs/03_candidates.md](docs/03_candidates.md) | 5 个进入 Novelty Audit 的候选问题 + 量化打分 + Top-1 推荐 |
+| [docs/04_stage2_audit_plan.md](docs/04_stage2_audit_plan.md) | Stage 2 六层查重的具体执行计划（可直接照做） |
+| [docs/05_references.md](docs/05_references.md) | 参考文献 + **逐条核实状态标注** |
+
+## Stage 1 一句话结论
+
+> 2025–2026 年，"给 VLA 做鲁棒性 benchmark"和"提出一个更鲁棒的模块"这两条路已经过热；
+> 真正还空着的是**测量层面**的问题——**鲁棒性提升到底是真的，还是干净性能的副产物**，
+> 以及**闭环控制中扰动如何随任务时域复合**。这正好是单张 4080 用别人已发布的
+> checkpoint 就能回答的问题。
+
+详见 [docs/03_candidates.md](docs/03_candidates.md) 的 Top-1 推荐。
+
+## 证据纪律
+
+- 所有事实必须能追溯到原始论文（proceedings / publisher / OpenReview / arXiv）。
+- 不确定的信息标注 `[NOT VERIFIED]`，不猜测。
+- 禁止写 "No one has studied this"，只能写"在本次检索覆盖范围内未发现"，并附检索式。
+- 本次检索的**已知局限**见 [docs/05_references.md](docs/05_references.md) 顶部。
