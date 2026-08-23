@@ -30,6 +30,7 @@ Stage 8  Paper
 | [docs/04_stage2_audit_plan.md](docs/04_stage2_audit_plan.md) | Stage 2 六层查重的具体执行计划（可直接照做） |
 | [docs/05_references.md](docs/05_references.md) | 参考文献 + **逐条核实状态标注** |
 | [docs/06_stage2_audit_result.md](docs/06_stage2_audit_result.md) | **Stage 2 查重结果**：C1 降级为 C 并换 claim，C2 淘汰，Pilot 设计重写 |
+| [docs/08_cross_check_notes.md](docs/08_cross_check_notes.md) | **对外部审计报告的交叉核实**：一处判定逻辑不成立、一处文献事实纠正、C3 风险上调 |
 
 ## Stage 1 一句话结论
 
