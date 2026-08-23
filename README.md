@@ -35,9 +35,10 @@ Stage 8  Paper
 | [docs/09_venue_timeline.md](docs/09_venue_timeline.md) | **投稿窗口核实**：ICRA 2026 workshop 与 CoRL 2026 均已关闭，路线改为 arXiv 预印本 + RA-L |
 | [docs/10_stage3_pilot_protocol.md](docs/10_stage3_pilot_protocol.md) | **Stage 3 Pilot 预注册协议**：统计模型、功效分析、执行阶段、停止规则 |
 | [docs/11_work_orders.md](docs/11_work_orders.md) | **任务单**：分工、禁止事项、回报格式、验收标准 |
-| [docs/12_t0_audit.md](docs/12_t0_audit.md) | **T0 验收记录**：T0-1 通过，T0-2 因引用不实退回 |
-| [docs/14_t0_2r_audit.md](docs/14_t0_2r_audit.md) | **T0-2R 验收**：通过，但引文图有 2–3 个月索引盲区；新增常设监视与零算力预试验 |
-| [docs/13_t0_2r_result.md](docs/13_t0_2r_result.md) | **T0-2R 严格核验**：Layer 5 引文图重检与 abstract 页面逐字验证 |
+| [docs/13_t0_2r_result.md](docs/13_t0_2r_result.md) | **T0-2R 严格核验**：Layer 5 引文图重检与 12 篇全量施引核实 |
+| [docs/14_t0_2r_audit.md](docs/14_t0_2r_audit.md) | **T0-2R 验收**：通过，新增常设监视与零算力预试验 |
+| [docs/15_t2_pre_result.md](docs/15_t2_pre_result.md) | **T2-PRE 预试验报告**：公开基准数据实证拟合，7 轴全量证伪 PDR 比例假设 |
+| [docs/watch_log.md](docs/watch_log.md) | **T5 前瞻监视日志**：每周 cs.RO / cs.LG 新提交追踪 |
 
 ## Stage 1 一句话结论
 
