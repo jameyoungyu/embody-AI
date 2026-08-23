@@ -7,8 +7,8 @@
 ## 方法论（Stage 流程）
 
 ```
-Stage 1  Literature Mining   （已完成）
-Stage 2  Novelty Audit（6 层查重）← 当前阶段（Layer 1-4/6 完成，Layer 5 引文图待补）
+Stage 1  Literature Mining（已完成）
+Stage 2  Novelty Audit（已完成：C1 边界重塑与假设证伪，C3 全量查重与交叉验证）  ← 当前阶段
 Stage 3  4080 Pilot（验证现象是否存在）
 Stage 4  Mechanism（研究成因）
 Stage 5  Generalization（跨模型 / 跨数据集）
@@ -27,10 +27,11 @@ Stage 8  Paper
 | [docs/01_landscape.md](docs/01_landscape.md) | 2022–2026 研究地图：15 个子方向的主流方法 / 已解决 / 未解决 / 拥挤度 |
 | [docs/02_failure_modes.md](docs/02_failure_modes.md) | Failure Mode 矿藏清单 + **淘汰清单**（哪些方向已经死了） |
 | [docs/03_candidates.md](docs/03_candidates.md) | 5 个进入 Novelty Audit 的候选问题 + 量化打分 + Top-1 推荐 |
-| [docs/04_stage2_audit_plan.md](docs/04_stage2_audit_plan.md) | Stage 2 六层查重的具体执行计划（可直接照做） |
+| [docs/04_stage2_audit_plan.md](docs/04_stage2_audit_plan.md) | Stage 2 六层查重的具体执行计划 |
 | [docs/05_references.md](docs/05_references.md) | 参考文献 + **逐条核实状态标注** |
-| [docs/06_stage2_audit_result.md](docs/06_stage2_audit_result.md) | **Stage 2 查重结果**：C1 降级为 C 并换 claim，C2 淘汰，Pilot 设计重写 |
-| [docs/08_cross_check_notes.md](docs/08_cross_check_notes.md) | **对外部审计报告的交叉核实**：一处判定逻辑不成立、一处文献事实纠正、C3 风险上调 |
+| [docs/06_stage2_audit_result.md](docs/06_stage2_audit_result.md) | **Stage 2 查重结果**：C1 降级为 C 并换 claim，C2 淘汰，Pilot 统计设计重写 |
+| [docs/07_c3_stage2_audit.md](docs/07_c3_stage2_audit.md) | **Candidate C3 全量查重**：抓取 Corruption 基准与 AP-执行脱钩机制审计 |
+| [docs/08_cross_check_notes.md](docs/08_cross_check_notes.md) | **对外部审计报告的交叉核实**：一处判定逻辑不成立、一处文献事实纠正、C3 风险重估 |
 
 ## Stage 1 一句话结论
 
