@@ -36,6 +36,7 @@ Stage 8  Paper
 | [docs/10_stage3_pilot_protocol.md](docs/10_stage3_pilot_protocol.md) | **Stage 3 Pilot 预注册协议**：统计模型、功效分析、执行阶段、停止规则 |
 | [docs/11_work_orders.md](docs/11_work_orders.md) | **任务单**：分工、禁止事项、回报格式、验收标准 |
 | [docs/12_t0_audit.md](docs/12_t0_audit.md) | **T0 验收记录**：T0-1 通过，T0-2 因引用不实退回 |
+| [docs/14_t0_2r_audit.md](docs/14_t0_2r_audit.md) | **T0-2R 验收**：通过，但引文图有 2–3 个月索引盲区；新增常设监视与零算力预试验 |
 | [docs/13_t0_2r_result.md](docs/13_t0_2r_result.md) | **T0-2R 严格核验**：Layer 5 引文图重检与 abstract 页面逐字验证 |
 
 ## Stage 1 一句话结论
