@@ -1,0 +1,3 @@
+replicates=200  conditions=3  checkpoints=12  N/cell=150  nominal level 5%
+  flat Cells pooled (clean counted 3x): type I = 73.0%
+  hierarchical (clean counted once)     : type I = 4.0%

@@ -181,3 +181,206 @@ def pdr(cells: list[Cell]) -> np.ndarray:
     p_c = np.array([(c.k_clean + 0.5) / (c.n_clean + 1.0) for c in cells])
     p_o = np.array([(c.k_ood + 0.5) / (c.n_ood + 1.0) for c in cells])
     return (p_c - p_o) / np.clip(p_c, EPS, None)
+
+
+# ---------------------------------------------------------------------------
+# Hierarchical form: one clean observation per checkpoint, many perturbed ones
+# ---------------------------------------------------------------------------
+#
+# The flat `Cell` above carries its own clean counts, which is correct only when
+# a fit contains one perturbation condition. Pool several conditions out of
+# `Cell`s and the same clean episodes enter the likelihood once per condition,
+# shrinking the latent clean rate far below what the data support and inflating
+# significance. Real pilots want the pooled fit -- sharing theta across
+# conditions is what makes it precise -- so the pooled form has to be built
+# properly rather than assembled from `Cell`s.
+#
+# Each condition j (a perturbation axis at one severity) gets its own intercept
+# alpha_j, since camera shift and lighting have no reason to share one. gamma
+# may be shared across conditions or estimated per condition; whether the
+# capability-robustness coupling is perturbation-specific is itself a question
+# worth asking of the data.
+
+
+@dataclass
+class OODObs:
+    """Perturbed outcome of one checkpoint under one condition."""
+
+    k: int
+    n: int
+    condition: int
+
+
+@dataclass
+class Checkpoint:
+    """One policy checkpoint: a single clean observation, many perturbed ones."""
+
+    k_clean: int
+    n_clean: int
+    ood: list[OODObs]
+
+
+@dataclass
+class HierFit:
+    alpha: np.ndarray        # one intercept per condition
+    gamma: np.ndarray        # one exponent per condition (identical when shared)
+    theta: np.ndarray        # latent clean rate per checkpoint
+    loglik: float
+    n_conditions: int
+    shared_gamma: bool
+    converged: bool
+
+    def predict(self, p_clean, condition: int) -> np.ndarray:
+        """Perturbed rate this fit predicts for a given clean rate."""
+        p = np.clip(np.asarray(p_clean, dtype=float), EPS, 1.0)
+        return np.clip(np.exp(self.alpha[condition] + self.gamma[condition] * np.log(p)),
+                       EPS, 1 - EPS)
+
+
+def _hier_theta(alpha, gamma, cps, iters=64):
+    """Latent clean rate per checkpoint, maximised for fixed (alpha, gamma).
+
+    Same vectorised bisection as the flat case; the score now sums the pull
+    from every perturbed observation attached to the checkpoint, while the
+    clean observation contributes exactly once.
+    """
+    k_c = np.array([c.k_clean for c in cps], dtype=float)
+    n_c = np.array([c.n_clean for c in cps], dtype=float)
+    lo = np.full(len(cps), 1e-6)
+    hi = np.full(len(cps), 1 - 1e-6)
+
+    def score(th):
+        s = k_c / th - (n_c - k_c) / (1.0 - th)
+        for i, cp in enumerate(cps):
+            for o in cp.ood:
+                g = gamma[o.condition]
+                p = min(max(np.exp(alpha[o.condition] + g * np.log(th[i])), EPS), 1 - EPS)
+                s[i] += g * o.k / th[i] - g * p * (o.n - o.k) / (th[i] * (1.0 - p))
+        return s
+
+    for _ in range(iters):
+        mid = 0.5 * (lo + hi)
+        right = score(mid) > 0
+        lo = np.where(right, mid, lo)
+        hi = np.where(right, hi, mid)
+    return 0.5 * (lo + hi)
+
+
+def _hier_loglik(alpha, gamma, cps):
+    th = np.clip(_hier_theta(alpha, gamma, cps), EPS, 1 - EPS)
+    ll = 0.0
+    for i, cp in enumerate(cps):
+        ll += cp.k_clean * np.log(th[i]) + (cp.n_clean - cp.k_clean) * np.log1p(-th[i])
+        for o in cp.ood:
+            p = float(np.clip(np.exp(alpha[o.condition] + gamma[o.condition] * np.log(th[i])),
+                              EPS, 1 - EPS))
+            ll += o.k * np.log(p) + (o.n - o.k) * np.log1p(-p)
+    return ll, th
+
+
+def fit_hier(cps: list[Checkpoint], n_conditions: int, shared_gamma: bool = True,
+             fixed_gamma: float | None = None) -> HierFit:
+    """Profile MLE with one clean observation per checkpoint.
+
+    shared_gamma=True estimates a single exponent across conditions;
+    False gives each condition its own. fixed_gamma pins every exponent, which
+    is the null used by `lrt_hier`.
+    """
+    p_c = np.array([(c.k_clean + 0.5) / (c.n_clean + 1.0) for c in cps])
+    a0 = np.zeros(n_conditions)
+    for j in range(n_conditions):
+        vals = [(np.log((o.k + 0.5) / (o.n + 1.0)) - np.log(p_c[i]))
+                for i, c in enumerate(cps) for o in c.ood if o.condition == j]
+        a0[j] = float(np.mean(vals)) if vals else -0.6
+
+    if fixed_gamma is not None:
+        gam = np.full(n_conditions, float(fixed_gamma))
+        obj = lambda x: -_hier_loglik(x, gam, cps)[0]
+        res = optimize.minimize(obj, a0, method="L-BFGS-B",
+                                options={"maxiter": 8000, "ftol": 1e-12})
+        alpha, gamma = res.x, gam
+    elif shared_gamma:
+        obj = lambda x: -_hier_loglik(x[:-1], np.full(n_conditions, x[-1]), cps)[0]
+        res = optimize.minimize(obj, np.append(a0, 1.0), method="L-BFGS-B",
+                                options={"maxiter": 8000, "ftol": 1e-12})
+        alpha, gamma = res.x[:-1], np.full(n_conditions, res.x[-1])
+    else:
+        obj = lambda x: -_hier_loglik(x[:n_conditions], x[n_conditions:], cps)[0]
+        res = optimize.minimize(obj, np.concatenate([a0, np.ones(n_conditions)]),
+                                method="L-BFGS-B", options={"maxiter": 12000, "ftol": 1e-12})
+        alpha, gamma = res.x[:n_conditions], res.x[n_conditions:]
+
+    ll, th = _hier_loglik(alpha, gamma, cps)
+    return HierFit(alpha, gamma, th, ll, n_conditions, shared_gamma, bool(res.success))
+
+
+def lrt_hier(cps: list[Checkpoint], n_conditions: int, shared_gamma: bool = True) -> dict:
+    """Test H0: every exponent equals 1, i.e. drop is proportional to clean rate.
+
+    Rejecting it says relative drop cannot be compared across policies of
+    different capability without first accounting for the curve.
+    """
+    free = fit_hier(cps, n_conditions, shared_gamma=shared_gamma)
+    null = fit_hier(cps, n_conditions, fixed_gamma=1.0)
+    df = 1 if shared_gamma else n_conditions
+    stat = max(0.0, 2.0 * (free.loglik - null.loglik))
+    return {
+        "gamma_hat": free.gamma.copy(),
+        "alpha_hat": free.alpha.copy(),
+        "lr_stat": stat,
+        "df": df,
+        "p_value": float(stats.chi2.sf(stat, df=df)),
+        "converged": free.converged and null.converged,
+        "fit": free,
+    }
+
+
+def effective_robustness_vs_reference(reference: HierFit, held_out: list[Checkpoint]) -> list[dict]:
+    """Residual of held-out policies above a curve fitted on a reference population.
+
+    Fitting the curve on the same policies you are judging lets a genuinely
+    robust method drag the curve up and erase its own residual. Following
+    Taori et al., the curve is fitted on standard policies only, and robustness
+    interventions are scored against it as held-out points.
+    """
+    out = []
+    for cp in held_out:
+        p_clean = (cp.k_clean + 0.5) / (cp.n_clean + 1.0)
+        for o in cp.ood:
+            observed = (o.k + 0.5) / (o.n + 1.0)
+            predicted = float(reference.predict(p_clean, o.condition))
+            out.append({
+                "condition": o.condition,
+                "p_clean": p_clean,
+                "p_ood": observed,
+                "predicted": predicted,
+                "effective_robustness": observed - predicted,
+                "pdr": (p_clean - observed) / max(p_clean, EPS),
+            })
+    return out
+
+
+def paired_bootstrap_gamma(cps: list[Checkpoint], n_conditions: int, n_boot: int = 400,
+                           seed: int = 0, shared_gamma: bool = True) -> dict:
+    """Checkpoint-level bootstrap CI for gamma.
+
+    The likelihood treats clean and perturbed outcomes as independent even
+    though they share initial-state seeds. That is not automatically
+    conservative, so the interval reported alongside the LRT is resampled over
+    checkpoints rather than assumed.
+    """
+    rng = np.random.default_rng(seed)
+    idx = np.arange(len(cps))
+    draws = []
+    for _ in range(n_boot):
+        pick = rng.choice(idx, size=len(cps), replace=True)
+        try:
+            f = fit_hier([cps[i] for i in pick], n_conditions, shared_gamma=shared_gamma)
+            draws.append(f.gamma.copy())
+        except Exception:
+            continue
+    if not draws:
+        return {"lo": None, "hi": None, "n_boot": 0}
+    d = np.array(draws)
+    return {"lo": np.percentile(d, 2.5, axis=0), "hi": np.percentile(d, 97.5, axis=0),
+            "n_boot": len(draws)}

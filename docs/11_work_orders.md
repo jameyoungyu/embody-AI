@@ -94,7 +94,9 @@ T0-2  Taori 施引中的机器人论文: [标题, 编号] × N（无则写 "0 �
 2. 每个单元格记录：模型、轴、扰动成功率、**对应的干净成功率**、**每格 episode 数 n**。
    n 若论文未写，记录其声明的评测协议（LIBERO 惯例每任务 50 × 10 任务 = 500/套），
    并在表中标注 n 是「论文明确给出」还是「按协议推断」。
-3. 用 `analysis/idood_model.py` **按轴分别拟合**，报告 γ、95% CI、LRT p 值。
+3. 用 `analysis/idood_model.py` 的 **`fit_hier()` / `lrt_hier()`** 拟合，报告 γ、95% CI、LRT p 值。
+   **禁止用扁平 `Cell` 池化多个条件**——那会让 clean 观测被重复计入、凭空造出 γ≠1
+   （实测真值 γ=1 时单次抽样即得 p=0.035）。CI 用 `paired_bootstrap_gamma()`。
 4. 顺带算 PDR 排序 vs 残差排序的 Spearman——这是 H3 的免费预演。
 
 ## 禁止事项
@@ -115,6 +117,32 @@ H3 预演: 每轴 Spearman(PDR 排序, 残差排序) = ____
 至少两个独立数据源，每源至少一个轴上有 ≥5 个点对。
 - **各源 γ 的 CI 都覆盖 1** → C1 提前死亡，转 T4，不必再跑 T1/T2。
 - **γ 显著偏离 1** → C1 大幅提前，T1/T2 转为「用受控实验确认公开表格上看到的现象」。
+
+---
+
+# T6：Related Work 重定位（**在写论文之前必须完成**）
+
+## 起因
+外部评审指出并经本会话核实：**arXiv `2602.03344`
+《Robustness as an Emergent Property of Task Performance》**（2026-02，cs.CL）
+已经证明鲁棒性主要由 task competence 驱动，并建议减少对鲁棒性的独立投入。
+**"发现能力混杂鲁棒性"这个概念命题已被发表**，不得再作为本工作的 headline。
+
+## 步骤
+1. 读 `2602.03344` 全文，重点看：它用了哪些相对下降指标、是否讨论过指标的可比性、
+   附录里 PDR 与总体性能的趋势具体是什么形状。**逐字存档到 `docs/evidence/`。**
+2. 读 `2603.11400`《Deployment-Time Reliability of Learned Robot Policies》
+   （**Christopher Agia 的斯坦福博士学位论文**，不是会议论文，引用时文献类型要写对）,
+   摘出其关于 compounding errors 的表述——H2 机制部分要引。
+3. 按 `10_stage3_pilot_protocol.md` §1bis 的对照表重写定位段落。
+
+## 禁止事项
+- 禁止把 `2602.03344` 说成"只是 NLP、与我们无关"。它的**推论**直接冲击整个 robust-VLA 研究线，
+  必须正面处理。
+- 禁止沿用评审给的 "ROEP" 这个名字——查无此文，正确出处见上。
+
+## 验收标准
+两篇都有逐字存档；定位段落写成"检验其推论在闭环控制中是否成立"，而非"我们首次发现"。
 
 ---
 
@@ -191,7 +219,11 @@ T1 验收通过。
 ## 步骤
 1. 选 1 个扰动轴（建议相机视角——LIBERO-Plus 报告它最致命，信号最强）。
 2. 3 个强度 × 全部 checkpoint × 150 episodes，初始状态种子与 T1 干净基线**配对**。
-3. 用仓库里的 `analysis/idood_model.py`：构造 `list[Cell]` → `lrt_proportional()`。
+3. 用 `analysis/idood_model.py`：构造 `list[Checkpoint]`（每个 checkpoint 一条 clean、
+   多条 `OODObs`）→ `lrt_hier()`；CI 用 `paired_bootstrap_gamma()`。
+   **禁止用扁平 `Cell` 池化多个条件。**
+4. 曲线只在**参考总体**（标准训练策略）上拟合；鲁棒性方法作为 held-out，
+   用 `effective_robustness_vs_reference()` 打分。见协议 §3.3bis。
 4. 画 clean SR vs perturbed SR 散点 + 拟合曲线 + γ=1 参考线。
 
 ## 禁止事项
