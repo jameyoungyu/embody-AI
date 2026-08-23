@@ -32,6 +32,7 @@ Stage 8  Paper
 | [docs/06_stage2_audit_result.md](docs/06_stage2_audit_result.md) | **Stage 2 查重结果**：C1 降级为 C 并换 claim，C2 淘汰，Pilot 统计设计重写 |
 | [docs/07_c3_stage2_audit.md](docs/07_c3_stage2_audit.md) | **Candidate C3 全量查重**：抓取 Corruption 基准与 AP-执行脱钩机制审计 |
 | [docs/08_cross_check_notes.md](docs/08_cross_check_notes.md) | **对外部审计报告的交叉核实**：一处判定逻辑不成立、一处文献事实纠正、C3 风险重估 |
+| [docs/09_venue_timeline.md](docs/09_venue_timeline.md) | **投稿窗口核实**：ICRA 2026 workshop 与 CoRL 2026 均已关闭，路线改为 arXiv 预印本 + RA-L |
 
 ## Stage 1 一句话结论
 
