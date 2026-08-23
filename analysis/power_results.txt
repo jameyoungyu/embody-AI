@@ -1,1 +1,29 @@
-python3: can't open file '/home/user/embody-AI/analysis/run_power.py': [Errno 2] No such file or directory
+Calibration and power of the LRT for H0: gamma == 1
+alpha = log(0.55); 150 replicates per configuration; nominal level 0.05
+
+--- checkpoint spread: wide (clean SR 0.20-0.90) ---
+ gamma    M  N/cell  episodes   reject   gamma_hat
+  1.00   12      50      1200    5.3%   1.006 +/-0.195   <- type I error
+  1.00   12     150      3600    5.3%   1.010 +/-0.110   <- type I error
+  1.00   20     150      6000    6.7%   0.996 +/-0.091   <- type I error
+  1.25   12      50      1200   20.7%   1.253 +/-0.254
+  1.25   12     150      3600   55.3%   1.271 +/-0.143
+  1.25   20     150      6000   70.7%   1.239 +/-0.096
+  1.50   12      50      1200   61.3%   1.553 +/-0.313
+  1.50   12     150      3600   97.3%   1.515 +/-0.152
+  1.50   20     150      6000   98.0%   1.496 +/-0.121
+  2.00   12      50      1200   93.3%   2.041 +/-0.400
+  2.00   12     150      3600  100.0%   2.001 +/-0.192
+  2.00   20     150      6000  100.0%   2.012 +/-0.172
+
+--- checkpoint spread: narrow (clean SR 0.45-0.75) ---
+ gamma    M  N/cell  episodes   reject   gamma_hat
+  1.00   12     150      3600    5.3%   1.007 +/-0.254   <- type I error
+  1.50   12     150      3600   42.0%   1.524 +/-0.358
+
+Capability confound in PDR, for policies exactly ON the fitted curve
+(every one has zero effective robustness by construction)
+gamma=0.75   PDR at clean SR 0.30 -> 0.90: 0.257 -> 0.435   spread =  17.8 points
+gamma=1.00   PDR at clean SR 0.30 -> 0.90: 0.450 -> 0.450   spread =   0.0 points
+gamma=1.50   PDR at clean SR 0.30 -> 0.90: 0.699 -> 0.478   spread =  22.1 points
+gamma=2.00   PDR at clean SR 0.30 -> 0.90: 0.835 -> 0.505   spread =  33.0 points
