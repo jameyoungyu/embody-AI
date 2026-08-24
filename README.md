@@ -38,6 +38,7 @@ Stage 8  Paper
 | [docs/13_t0_2r_result.md](docs/13_t0_2r_result.md) | **T0-2R 严格核验**：Layer 5 引文图重检与 12 篇全量施引核实 |
 | [docs/14_t0_2r_audit.md](docs/14_t0_2r_audit.md) | **T0-2R 验收**：通过，新增常设监视与零算力预试验 |
 | [docs/15_external_review_audit.md](docs/15_external_review_audit.md) | **外部评审验收**：2602.03344 核实属实并改写定位；层次似然修复（一类错误 73%→4%） |
+| [docs/21_t2_pre_t1mini_audit.md](docs/21_t2_pre_t1mini_audit.md) | **T2-PRE / T1-mini 验收**：公开表格 γ̂ 不可信；主假设换为「匹配能力下跨架构离散 14 倍」 |
 | [docs/15_t2_pre_result.md](docs/15_t2_pre_result.md) | **T2-PRE 预试验报告**：公开基准数据实证拟合，7 轴全量证伪 PDR 比例假设 |
 | [docs/watch_log.md](docs/watch_log.md) | **T5 前瞻监视日志**：每周 cs.RO / cs.LG 新提交追踪 |
 
