@@ -167,44 +167,43 @@ perturbation success rate / generalization gap policy / robustness metric robot
 
 ---
 
-# T1：Stage 3 Pilot Phase 0（前置门）
+# T1：Controlled Within-Family Experiment（ACT 优先路线，见 `16_t1_act_protocol.md`）
 
 ## 前置门
-**T0-1 通过即可开始**（已通过）。不必等 T0-2R。
+**T0 与 T2-PRE 预试验完成归档**（已通过）。
 
 ## 目标
-在跑任何正式实验之前，确认三件事：harness 能用、吞吐已知、**混杂确实存在**。
+在 ACT 策略族内执行受控能力扫描，利用三集隔离与 Seed-Level 配对评测，检验鲁棒性保持率 $R$ 及条件破坏率 $D$ 是否系统性随基线能力演化。
 
-## 步骤
-1. 用 `allenai/vla-evaluation-harness` 搭 LIBERO 评测；不要自己写评测循环。
-2. 建 checkpoint 池：4 个架构族，每族沿固定 schedule 取 checkpoint（**不许挑 best**）。
-3. 每个 checkpoint 跑 150 个干净 episode，使用**同一组初始状态种子**。
-4. 实测并记录单 episode 墙钟时间（分模型）。
-5. 计算 checkpoint 池的干净成功率**跨度**。
-6. **单独报告环境就绪状态**：torch / LIBERO / 评测 harness 是否已装好可跑。
-   未就绪则先报安装所需时间，**不要把环境搭建时间混进吞吐估计**。
+## 阶段规划
+1. **T1-mini 冒烟排查跑（Sanity Run）**：
+   - 1 seed × 5 checkpoints（$p_{clean} \approx [0.35, 0.50, 0.65, 0.80, 0.92]$）
+   - 2 扰动轴（Camera / Initial Object Pose）× 100~150 配对 episodes
+   - 目的：验证显式状态还原 $S_{0,j}^{clean} = S_{0,j}^{OOD}$、排查地板/天花板效应、实测 RTX 4080 墙钟吞吐。
+2. **T1-A 正式识别跑**：
+   - ACT 架构：$3 \text{ training seeds} \times 7 \text{ capability bins} = 21$ 个评估点
+   - 严格在 Validation 集选点后，进入独立 Frozen Test 集测 Clean 与 OOD 配对矩阵。
+3. **T1-B 跨族复现跑**：
+   - Diffusion Policy：$3 \text{ seeds} \times 5 \text{ capability bins} = 15$ 个评估点。
 
 ## 禁止事项
-- **禁止挑选 best checkpoint**（会系统扭曲曲线右端）。
-- 禁止各模型用不同的初始状态种子。
-- 禁止用估计吞吐排期，必须实测。
+- **严禁在观测 OOD 后挑选 Checkpoint（No Cherry-Picking）**。
+- **严禁仅用随机数种子代替显式物理状态还原**（必须保存并恢复完整状态快照）。
+- 严禁将选点所用的 Validation 集混入最终 Test 集统计。
 
 ## 回报格式
 ```
-模型/checkpoint 表: [名称, 步数, clean SR, n, Wilson 95% CI]
-干净 SR 跨度: ____ 个百分点
-单 episode 墙钟: 每个模型 ____ 秒
-Phase 1/2 按实测吞吐推算的日历天数: ____
+T1-mini 冒烟结果:
+- 状态还原复现性: 100% / 异常
+- Checkpoint 干净能力梯度: [c1, c2, c3, c4, c5] (跨度: ____)
+- OOD 响应区间: Camera [____], Object Pose [____] (有无地板/天花板)
+- RTX 4080 单 episode 实测耗时: ____ 秒
+- 全量 T1-A 预期耗时: ____ 小时
 ```
 
 ## 验收标准
-干净 SR 跨度（功效依据见 `10_stage3_pilot_protocol.md` §4）：
-- **≥ 60 个百分点** → 通过，进 T2。
-- **30–60** → 有条件通过。**先尝试多保留早期 checkpoint 把跨度拉宽**（零算力成本，
-  跨度 30 点时 γ=1.5 的检出率只有 42%，跨度 70 点时是 97%）。拉不宽再带功效声明进 T2。
-- **< 30** → 按预注册规则终止 C1，转 T4。
+T1-mini 状态还原无误差、能力跨度 $\ge 50$ 点且无全量地板效应 $\to$ 正式启动 T1-A。
 
-拉宽跨度的优先级**高于**增加每格 episode 数——同样算力下前者换来的功效多得多。
 
 ---
 
